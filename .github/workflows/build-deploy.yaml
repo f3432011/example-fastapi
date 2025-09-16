@@ -2,8 +2,20 @@ name: Build and Deploy Code
 
 on: [push, pull_request]
 
+
+
 jobs:
-  build:
+  job1:
+     env:
+      DATABASE_HOSTNAME=postgres 
+      DATABASE_PORT=5432
+      DATABASE_PASSWORD=toor
+      DATABASE_NAME=fastapi
+      DATABASE_USERNAME=postgres
+      SECRET_KEY=N3b9rXqL6wF8uJ0pK4tS7vY2mH1cZ5xQnA8eR3fV0gB6yW9d
+      ALGORITHM=HS256
+      ACCESS_TOKEN_EXPIRE_MINUTES=60
+
     runs-on: ubuntu-latest
 
     steps:
