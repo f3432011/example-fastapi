@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Response, Depends, HTTPException, status, APIRouter
 from .. import models, schemas, utils
 from sqlalchemy.orm import Session
+from sqlalchemy.exc import IntegrityError
 from ..database import get_db
 
 router = APIRouter(prefix="/users", tags=["Users"])
@@ -15,12 +16,25 @@ def create_user(user: schemas.UserCreate, db: Session = Depends(get_db)):
     user.password = hashed_password
 
     new_user = models.User(**user.model_dump())
-
     db.add(new_user)
-    db.commit()
-    db.refresh(new_user)
 
-    return new_user
+    try:
+        db.commit()
+        db.refresh(new_user)
+        return new_user
+    except IntegrityError as e:
+        db.rollback()
+        if "users_email_key" in str(e.orig):
+            # Proper HTTP 409 Conflict for existing account
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Account with this email already exists.",
+            )
+        # fallback for other DB errors
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Database error occurred.",
+        )
 
 
 # ✅Get a user by ID

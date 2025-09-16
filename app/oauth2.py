@@ -4,7 +4,6 @@ from httpx import get
 from jose import JWTError, jwt
 from datetime import datetime, timedelta, timezone
 from . import schemas, database, models
-from jose import JWTError, jwt
 from fastapi import Depends, status, HTTPException
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
