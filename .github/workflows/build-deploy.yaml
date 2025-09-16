@@ -19,7 +19,7 @@ on: [push, pull_request]
          
  
        - name: install dependencies
-         run: pip install -r requirements.txt
+         run: pip install -r requirement.txt
          
  
       
